@@ -1,0 +1,18 @@
+<?php
+
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+
+Schema::create('courses', function (Blueprint $table) {
+    $table->id();
+    $table->string('title');
+    $table->text('description')->nullable();
+    $table->date('date_start');
+    $table->date('date_end')->nullable();
+    $table->string('location')->nullable();
+    $table->string('banner_image')->nullable();
+    $table->decimal('price', 10, 2)->nullable();
+    $table->boolean('status')->default(1);
+    $table->timestamps();
+});
