@@ -15,9 +15,10 @@ return new class extends Migration
             $table->id();
             $table->string('name');
             $table->string('email')->unique();
-            $table->timestamp('email_verified_at')->nullable();
+            $table->string('cpf_cnpj', 14)->unique();
             $table->string('password');
-            $table->rememberToken();
+            $table->enum('role', ['admin', 'client'])->default('client');
+            $table->unsignedBigInteger('bling_contact_id')->nullable();
             $table->timestamps();
         });
 
@@ -47,5 +48,5 @@ return new class extends Migration
         Schema::dropIfExists('sessions');
     }
 
-    
+
 };

@@ -91,10 +91,10 @@ body {
 
             <div class="login-card text-center">
 
-                
+
                 <img src="{{ asset('img/AGR_LOGO.png') }}" class="logo">
 
-                
+
                 <h4 class="login-title fw-bold mb-1">
                     AGR Medical Prime
                 </h4>
@@ -103,28 +103,28 @@ body {
                     Plataforma exclusiva para clientes premium
                 </p>
 
-                
+
                 <form method="POST" action="{{ route('login.auth') }}">
                     @csrf
 
-                    
+
                     <div class="mb-3 text-start">
                         <label class="form-label">E-mail</label>
-                        <input 
-                            type="email" 
-                            name="email" 
-                            class="form-control" 
+                        <input
+                            type="email"
+                            name="email"
+                            class="form-control"
                             placeholder="Digite seu e-mail"
                         >
                     </div>
 
-                   
+
                     <div class="mb-3 text-start position-relative">
                         <label class="form-label">Senha</label>
 
-                        <input 
-                            type="password" 
-                            name="password" 
+                        <input
+                            type="password"
+                            name="password"
                             id="password"
                             class="form-control pe-5"
                             placeholder="Digite sua senha"
@@ -139,25 +139,19 @@ body {
                         <p class="text-danger">{{ $message }}</p>
                     @enderror
 
-                    
+
                     <button type="submit" class="btn btn-login w-100">
                         Entrar
                     </button>
 
-                    
+
                     <hr class="my-4 text-light">
 
-                    <p class="text-light">ou</p>
-
-                    
-                    <a href="{{ route('google.login') }}" class="btn btn-light w-100 d-flex align-items-center justify-content-center gap-2">
-                        <img src="https://img.icons8.com/color/24/google-logo.png"/>
-                        Entrar com Google
-                    </a>
+                    <p class="text-light">Acesse sua conta premium para liberar todo o AGR Prime.</p>
 
                 </form>
 
-                
+
                 <p class="mt-4 mb-0 text-light">
                     Não tem conta?
                     <a href="{{ route('register') }}" class="text-info">Criar conta</a>

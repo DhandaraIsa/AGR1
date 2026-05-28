@@ -8,64 +8,80 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Laravel\Socialite\Facades\Socialite;
 
-
-
 class AuthController extends Controller
 {
-    // 🔹 Tela login
-    public function login()
+    // 🔹 Tela Login
+    public function showLogin()
     {
+        if (Auth::check()) {
+            return redirect()->route('home');
+        }
+
         return view('pages.login');
     }
 
-    // 🔹 Autenticar
-    public function authenticate(Request $request)
-       
+    // 🔹 Autenticar usuário
+    public function login(Request $request)
     {
+        $request->validate([
+            'email' => ['required', 'email'],
+            'password' => ['required']
+        ]);
+
         $credentials = $request->only('email', 'password');
 
         if (Auth::attempt($credentials)) {
             $request->session()->regenerate();
-            return redirect('/'); // ou dashboard
+
+            return redirect()->route('home');
         }
 
         return back()->withErrors([
             'email' => 'Email ou senha inválidos'
-        ]);
+        ])->onlyInput('email');
     }
 
     // 🔹 Logout
     public function logout(Request $request)
-        
     {
         Auth::logout();
 
         $request->session()->invalidate();
         $request->session()->regenerateToken();
 
-        return redirect('/');
+        return redirect()->route('login');
     }
 
     // 🔹 Tela cadastro
-    public function register()
+    public function showRegister()
     {
+        if (Auth::check()) {
+            return redirect()->route('home');
+        }
+
         return view('pages.register');
     }
 
     // 🔹 Salvar cadastro
     public function store(Request $request)
     {
+        $cpf_cnpj = preg_replace('/\D/', '', $request->input('cpf'));
+
+        $request->merge(['cpf_cnpj' => $cpf_cnpj]);
 
         $request->validate([
-            'name' => 'required',
-            'email' => 'required|email|unique:users',
-            'password' => 'required|min:6'
+            'name' => ['required', 'string', 'max:255'],
+            'email' => ['required', 'email', 'unique:users,email'],
+            'cpf_cnpj' => ['required', 'digits_between:11,14', 'unique:users,cpf_cnpj'],
+            'phone' => ['nullable', 'regex:/^[0-9]+$/'],
+            'seller_name' => ['nullable', 'string', 'max:255'],
+            'password' => ['required', 'min:6', 'confirmed']
         ]);
 
         $user = User::create([
             'name' => $request->name,
             'email' => $request->email,
-            'cpf' => $request->cpf,
+            'cpf_cnpj' => $cpf_cnpj,
             'phone' => $request->phone,
             'seller_name' => $request->seller_name,
             'password' => Hash::make($request->password)
@@ -73,30 +89,37 @@ class AuthController extends Controller
 
         Auth::login($user);
 
-        return redirect('/');
+        return redirect()->route('home');
     }
 
-    public function redirectToGoogle()
-{
-    return Socialite::driver('google')->redirect();
-}
+    // 🔹 Google Login
+    // public function redirectToGoogle()
+    // {
+    //     return Socialite::driver('google')->redirect();
+    // }
 
-public function handleGoogleCallback()
-{
-    $googleUser = Socialite::driver('google')->user();
+    // // 🔹 Callback Google
+    // public function handleGoogleCallback()
+    // {
+    //     $googleUser = Socialite::driver('google')->user();
 
-    $user = User::where('email', $googleUser->getEmail())->first();
+    //     $user = User::where('email', $googleUser->getEmail())->first();
 
-    if (!$user) {
-        $user = User::create([
-            'name' => $googleUser->getName(),
-            'email' => $googleUser->getEmail(),
-            'password' => bcrypt('123456') // pode melhorar depois
-        ]);
-    }
+    //     if (!$user) {
 
-    Auth::login($user);
+    //         $user = User::create([
+    //             'name' => $googleUser->getName(),
+    //             'email' => $googleUser->getEmail(),
 
-    return redirect('/');
-}
+    //             // CPF fica null no login Google
+    //             'cpf' => null,
+
+    //             'password' => Hash::make(uniqid())
+    //         ]);
+    //     }
+
+    //     Auth::login($user);
+
+    //     return redirect('/');
+    // }
 }
